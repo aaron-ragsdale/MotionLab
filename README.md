@@ -1,10 +1,24 @@
 # Motion Lab
 
+## [Launch Motion Lab ↗](https://aaron-ragsdale.github.io/MotionLab/)
+
+[![Open Motion Lab in your browser](https://img.shields.io/badge/Launch-Motion%20Lab-2563eb?style=for-the-badge)](https://aaron-ragsdale.github.io/MotionLab/)
+
+**Direct website:** <https://aaron-ragsdale.github.io/MotionLab/>
+
+No installation, downloads, GitHub account, or API key required.
+
+### Quick start
+
+1. Open the website using the link above.
+2. Start the camera and allow camera access when prompted.
+3. Choose a landmark and explore your movement in real time.
+
 A standalone GitHub Pages laboratory for exploring MediaPipe Pose estimated motion. One Pose Landmarker pipeline at a time, with all 33 landmarks including wrist, index, pinky, thumb, ankle, heel and foot index. No separate hand model, backend, API key or video recording.
 
-## Deploy and use
+## Using Motion Lab
 
-Create a GitHub repository, upload `index.html` and `README.md` to its root, then enable Pages under Settings > Pages > Deploy from a branch > main > /(root). Open the published HTTPS URL and allow camera access. Choose Lite first for speed; Full and Heavy are alternatives. GPU is tried by default, with CPU fallback if initialization fails. Stop the camera to change model or processor.
+Open the live website linked above. Choose Lite first for speed; Full and Heavy are alternatives. GPU is tried by default, with CPU fallback if initialization fails. Stop the camera to change model or processor.
 
 ## Explore and record
 
@@ -30,3 +44,7 @@ Choose a landmark and coordinate space; examine position, velocity, acceleration
 ## Privacy and troubleshooting
 
 Camera frames are processed on the device and not uploaded by this app. Runtime and model assets are downloaded from public hosting. Use GitHub Pages HTTPS, grant camera permission, and ensure cdn.jsdelivr.net and storage.googleapis.com are accessible. If setup fails, try CPU or Lite. Inference is synchronous and may reduce render rate on slower devices. Fast movements can be undersampled. No separate hand skeleton is provided; pose hand and foot landmarks are coarse estimates. JavaScript syntax checked; live camera behavior requires browser testing.
+
+## Host your own copy (optional)
+
+Fork this repository and enable GitHub Pages under Settings > Pages > Deploy from a branch > main > /(root). Open your published HTTPS URL. This is only necessary if you want to host or modify your own version.
