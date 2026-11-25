@@ -23,5 +23,22 @@ export function trainForest(rows,classes,seed=42){
  }
  return Array.from({length:31},()=>tree(Array.from({length:rows.length},()=>rows[Math.floor(rand()*rows.length)]),0));
 }
-export function predict(model,x){const p=Array(model.classes.length).fill(0);for(let node of model.trees){while(!node.p)node=x[node.f]<=node.v?node.l:node.r;node.p.forEach((v,i)=>p[i]+=v/model.trees.length)}const i=p.indexOf(Math.max(...p));return {label:model.classes[i],confidence:p[i],probabilities:p}}
-export function validateModel(m){if(m?.format!=='modellab-controller-v1'||m.algorithm!=='random_forest'||!['pose','hands','both'].includes(m.input?.mode)||!Number.isInteger(m.input.frames)||m.input.frames<1||m.input.frames>60||m.input.sampleHz!==30||!Array.isArray(m.classes)||m.classes.length<2||m.classes.length>20||new Set(m.classes).size!==m.classes.length||m.classes.some(x=>typeof x!=='string'||!x.trim())||!Array.isArray(m.trees)||!m.trees.length||m.trees.length>100)throw Error('Unsupported model format');const d=({pose:132,hands:168,both:300})[m.input.mode]*m.input.frames;let nodes=0;function check(n,depth){if(!n||depth>12||++nodes>100000)throw Error('Invalid tree');if(n.p){if(!Array.isArray(n.p)||n.p.length!==m.classes.length||n.p.some(v=>!Number.isFinite(v)||v<0||v>1)||Math.abs(n.p.reduce((a,b)=>a+b,0)-1)>.001)throw Error('Invalid leaf');return}if(!Number.isInteger(n.f)||n.f<0||n.f>=d||!Number.isFinite(n.v))throw Error('Invalid split');check(n.l,depth+1);check(n.r,depth+1)}m.trees.forEach(n=>check(n,0));return m}
+export function trainClassifier(rows,classes,algorithm){
+ if(algorithm==='random_forest')return {trees:trainForest(rows,classes)};
+ if(algorithm==='knn')return {neighbors:rows.map(r=>({x:r.x,y:r.y})),k:Math.min(5,rows.length)};
+ if(algorithm==='centroid'){const d=rows[0].x.length;return {centroids:classes.map((_,i)=>{const group=rows.filter(r=>r.y===i),v=Array(d).fill(0);for(const r of group)for(let j=0;j<d;j++)v[j]+=r.x[j]/group.length;return v})}}
+ throw Error('Unknown algorithm');
+}
+function distance(a,b){let d=0;for(let i=0;i<a.length;i++)d+=(a[i]-b[i])**2;return d/a.length}
+export function predict(model,x){
+ if(model.algorithm==='knn'||model.algorithm==='centroid'){
+ const p=Array(model.classes.length).fill(0);
+ if(model.algorithm==='knn'){const near=model.neighbors.map(r=>({y:r.y,d:distance(x,r.x)})).sort((a,b)=>a.d-b.d).slice(0,model.k);for(const r of near)p[r.y]+=1/near.length}
+ else{const ds=model.centroids.map(v=>distance(x,v)),min=Math.min(...ds);const w=ds.map(d=>Math.exp(-(d-min)/Math.max(1e-6,min+.0001)));const sum=w.reduce((a,b)=>a+b,0);w.forEach((v,i)=>p[i]=v/sum)}
+ const i=p.indexOf(Math.max(...p));return {label:model.classes[i],confidence:p[i],probabilities:p};
+ }
+ const p=Array(model.classes.length).fill(0);for(let node of model.trees){while(!node.p)node=x[node.f]<=node.v?node.l:node.r;node.p.forEach((v,i)=>p[i]+=v/model.trees.length)}const i=p.indexOf(Math.max(...p));return {label:model.classes[i],confidence:p[i],probabilities:p}}
+export function validateModel(m){if(m?.format!=='modellab-controller-v1'||!['random_forest','knn','centroid'].includes(m.algorithm)||!['pose','hands','both'].includes(m.input?.mode)||!Number.isInteger(m.input.frames)||m.input.frames<1||m.input.frames>60||m.input.sampleHz!==30||!Array.isArray(m.classes)||m.classes.length<2||m.classes.length>20||new Set(m.classes).size!==m.classes.length||m.classes.some(x=>typeof x!=='string'||!x.trim()))throw Error('Unsupported model format');const d=({pose:132,hands:168,both:300})[m.input.mode]*m.input.frames;const vector=x=>Array.isArray(x)&&x.length===d&&x.every(Number.isFinite);
+ if(m.algorithm==='centroid'){if(!Array.isArray(m.centroids)||m.centroids.length!==m.classes.length||!m.centroids.every(vector))throw Error('Invalid centroids');return m}
+ if(m.algorithm==='knn'){if(!Array.isArray(m.neighbors)||!m.neighbors.length||m.neighbors.length>20000||!Number.isInteger(m.k)||m.k<1||m.k>m.neighbors.length||!m.neighbors.every(r=>Number.isInteger(r.y)&&r.y>=0&&r.y<m.classes.length&&vector(r.x)))throw Error('Invalid neighbors');return m}
+ if(!Array.isArray(m.trees)||!m.trees.length||m.trees.length>100)throw Error('Invalid forest');let nodes=0;function check(n,depth){if(!n||depth>12||++nodes>100000)throw Error('Invalid tree');if(n.p){if(!Array.isArray(n.p)||n.p.length!==m.classes.length||n.p.some(v=>!Number.isFinite(v)||v<0||v>1)||Math.abs(n.p.reduce((a,b)=>a+b,0)-1)>.001)throw Error('Invalid leaf');return}if(!Number.isInteger(n.f)||n.f<0||n.f>=d||!Number.isFinite(n.v))throw Error('Invalid split');check(n.l,depth+1);check(n.r,depth+1)}m.trees.forEach(n=>check(n,0));return m}
