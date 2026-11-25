@@ -69,3 +69,8 @@ The controller studio inherits the camera detector settings. Changing detectors 
 ## Camera startup and dependencies
 
 The camera panel displays setup progress for the selected detector(s), including camera access, JavaScript runtime, WASM selection, model downloads and detector initialization. Model transfers show received bytes and a percentage bar when the server exposes a usable content length. A completed checklist means the selected detectors initialized successfully for this session, not that their files are permanently cached or available offline. Later starts may be faster through normal browser caching. If startup fails, check the failed stage, camera permission, network access and CPU/Lite settings.
+
+
+## Learning guide
+
+[Open the MotionLab Learning Guide](https://aaron-ragsdale.github.io/MotionLab/tutorial.html) for twelve short chapters on landmarks, coordinate systems, movement signals, smoothing, data collection, temporal windowing, machine learning algorithms, evaluation and controller deployment. Includes interactive smoothing and sliding-window demonstrations and hands-on experiments. The guide opens in a separate tab from the app header to preserve the current working session.
