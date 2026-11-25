@@ -74,3 +74,8 @@ The camera panel displays setup progress for the selected detector(s), including
 ## Learning guide
 
 [Open the MotionLab Learning Guide](https://aaron-ragsdale.github.io/MotionLab/tutorial.html) for twelve short chapters on landmarks, coordinate systems, movement signals, smoothing, data collection, temporal windowing, machine learning algorithms, evaluation and controller deployment. Includes interactive smoothing and sliding-window demonstrations and hands-on experiments. The guide opens in a separate tab from the app header to preserve the current working session.
+
+
+### Unified detector modes
+
+Pose, Hands and Both now share the signal explorer, current landmark table, selected-point trial recording, review and movement classifier studio. Stable IDs are 0–32 for pose, 33–53 for left hand and 54–74 for right hand. Hand-containing selected-point classifier datasets use normalized image coordinates; pose-only datasets retain their original coordinate options. Hand presence is not a calibrated visibility score. The portable controller studio continues to use its separate standardized export schema.
