@@ -12,7 +12,7 @@ Choose any subset of random forest, KNN, nearest centroid, linear SVM and RBF SV
 
 ## Portable formats
 
-New classifiers use `motionlab-classifier-v2` and datasets use `motionlab-dataset-v2`. Earlier classifier export formats are not directly importable into the new studio. `controller-runtime.js` contains the selected-landmark feature extractor, resampling, training, prediction and model validation. `machine-learning-studio.js` handles dataset collection and model comparison. Stable IDs are 0–32 pose, 33–53 left hand and 54–74 right hand. Input configuration includes detector mode, pose variant, IDs, coordinate space, sample rate, frames and visibility threshold. Each selected point contributes x/y/z and a presence flag; missing points are zero-filled with presence zero. SVM exports scaling parameters; KNN and RBF SVM may include training vectors. Scores are not calibrated probabilities. The future controller extension must reproduce the same input pipeline and map labels to commands; it is not included here.
+New classifiers use `motionlab-classifier-v2` and datasets use `motionlab-dataset-v2`. Earlier classifier export formats are not directly importable into the new studio. `controller-runtime.js` contains the selected-landmark feature extractor, resampling, training, prediction and model validation. `machine-learning-studio.js` handles dataset collection and model comparison. Stable IDs are 0–32 pose, 33–53 left hand and 54–74 right hand. Input configuration includes detector mode, pose variant, IDs, coordinate space, sample rate, frames and visibility threshold. Each selected point contributes x/y/z and a presence flag; missing points are zero-filled with presence zero. SVM exports scaling parameters; KNN and RBF SVM may include training vectors. Scores are not calibrated probabilities. The controller configuration section maps each class to a command, tap or hold behavior, confirmation count and cooldown. The local playground tests these mappings from live predictions; uncertain or missing predictions release held actions. Export `motionlab-controller-v2` to bundle the classifier and mappings. A future compatible extension must reproduce this input pipeline and command behavior; the Chrome extension itself is not included.
 
 ## Camera and signal tools
 
@@ -27,3 +27,5 @@ The separate tutorial covers twelve chapters with interactive smoothing and slid
 ## Legacy files
 
 `classifier.js` and `training-lab.js` are retained for reference but no longer loaded by the main application.
+
+The training capture button changes from Record example to Cancel countdown / Cancel recording, then returns to Record example after completion.
