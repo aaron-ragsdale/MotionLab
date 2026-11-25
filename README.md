@@ -64,3 +64,8 @@ The vote score is not a calibrated probability. Held-out takes are a preliminary
 
 
 The controller studio inherits the camera detector settings. Changing detectors requires a compatible dataset or clearing the old one. The Learn more guide explains windowing, stride, scores, and exporting. KNN exports training feature vectors, not just learned parameters; share these files with that in mind. Scores are algorithm-specific and not calibrated probabilities. The same recording takes can be used to retrain each algorithm.
+
+
+## Camera startup and dependencies
+
+The camera panel displays setup progress for the selected detector(s), including camera access, JavaScript runtime, WASM selection, model downloads and detector initialization. Model transfers show received bytes and a percentage bar when the server exposes a usable content length. A completed checklist means the selected detectors initialized successfully for this session, not that their files are permanently cached or available offline. Later starts may be faster through normal browser caching. If startup fails, check the failed stage, camera permission, network access and CPU/Lite settings.
