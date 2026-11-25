@@ -48,3 +48,16 @@ Camera frames are processed on the device and not uploaded by this app. Runtime 
 ## Host your own copy (optional)
 
 Fork this repository and enable GitHub Pages under Settings > Pages > Deploy from a branch > main > /(root). Open your published HTTPS URL. This is only necessary if you want to host or modify your own version.
+
+
+## Train a custom controller model
+
+Open the [live MotionLab](https://aaron-ragsdale.github.io/MotionLab/), choose the detector in section 01 (Pose, Hands, or Both), select the matching detector and pose variant in section 07, then start the camera. Choose static recognition (one frame) or a temporal window (100–2000 ms). Enter your own class names, including a neutral/background class.
+
+Select a class and record a take. Static takes collect examples over four seconds; dynamic takes capture one movement after a countdown. Record at least three separate takes per class, preferably many more with varied positions and speeds. Train the random forest and inspect held-out-take accuracy. Test live predictions, adjust vote threshold and prediction stride, then download the model or training dataset. Import a saved model to test it again using matching camera settings.
+
+### Portable runtime
+
+`controller-runtime.js` exports `frameFeatures(poseResult, handResult, mode)`, `windowFeatures(buffer, timestamp, input)`, `predict(model, features)`, and `validateModel(model)`. The JSON format is `modellab-controller-v1`. It contains class labels, random forest trees, and input configuration (detector, pose variant, 30 Hz resampling, number of frames and feature schema). Frame features use camera-normalized x/y/z plus a presence bit for each landmark, in pose then left-hand then right-hand order, as applicable. Missing landmarks are zero-filled. Use a timestamped buffer of objects `{t, x}` and the same runtime for inference. No raw camera video is exported. Models are camera-relative and may need varied training examples for reliable use.
+
+The vote score is not a calibrated probability. Held-out takes are a preliminary evaluation, not evidence of generalization to new users. Window size and preprocessing should match training; changing them generally requires retraining. The Chrome extension and cross-site input dispatch are not included yet.
